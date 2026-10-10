@@ -2,6 +2,7 @@
   font-family: 'IBM Plex Sans';
   src: url('../fonts/ibm-plex-sans.woff2') format('woff2');
   font-weight: 400 700;
+  font-display: swap;
 }
 
 :root {
@@ -35,7 +36,9 @@ body {
   top: 0;
   left: 0;
   height: 3px;
-  width: 0;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
   background: var(--accent);
   z-index: 20;
 }
@@ -50,7 +53,11 @@ body {
   padding: 12px 32px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, padding 0.2s;
+}
+
+.topbar-compact {
+  padding-block: 6px;
 }
 
 .topbar-raised {
@@ -98,6 +105,7 @@ main {
 .hero-image {
   display: block;
   width: 100%;
+  height: auto;
 }
 
 .hero-copy {
@@ -129,8 +137,9 @@ main {
 .alerts-track {
   position: absolute;
   top: 8px;
-  left: 100%;
+  left: 0;
   display: flex;
+  will-change: transform;
   gap: 48px;
   white-space: nowrap;
   animation: alerts-scroll 18s linear infinite;
@@ -143,10 +152,23 @@ main {
 
 @keyframes alerts-scroll {
   from {
-    left: 100%;
+    transform: translateX(100vw);
   }
   to {
-    left: -120%;
+    transform: translateX(-120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alerts-track {
+    animation: none;
+    transform: none;
+    position: static;
+    padding: 8px 16px;
+    overflow: hidden;
+  }
+  .topbar {
+    transition: none;
   }
 }
 
@@ -169,10 +191,12 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
+  min-height: 236px;
 }
 
 .agent-card {
+  min-height: 220px;
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -181,6 +205,7 @@ main {
 
 .agent-avatar {
   width: 48px;
+  height: 48px;
   border-radius: 12px;
 }
 
@@ -225,6 +250,7 @@ main {
 }
 
 .results {
+  min-height: 480px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -278,6 +304,9 @@ main {
 
 .row-preview {
   position: fixed;
+  top: 0;
+  left: 0;
+  will-change: transform;
   z-index: 30;
   max-width: 320px;
   padding: 8px 12px;

@@ -38,7 +38,9 @@ window.WORKSPACES = ['acme-production', 'acme-staging', 'acme-finance-eu', 'acme
 window.CHANNELS = ['the web console', 'the Slack integration', 'a scheduled workflow', 'the public API', 'an IDE extension'];
 window.STATUSES =['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'blocked', 'error'];
 
-window.ACTIVITY = (function buildActivity(count) {
+window.ACTIVITY = [];
+
+window.ACTIVITY_READY = (async function buildActivity(count, chunk) {
   let seed = 20261009;
   const random = () => {
     seed = (seed * 1664525 + 1013904223) % 4294967296;
@@ -46,7 +48,7 @@ window.ACTIVITY = (function buildActivity(count) {
   };
   const pick = (list) => list[Math.floor(random() * list.length)];
   const start = Date.UTC(2026, 9, 9, 0, 0, 0);
-  const events = [];
+  const events = window.ACTIVITY;
   for (let i = 0; i < count; i++) {
     const agent = pick(window.AGENTS).name;
     const tool = pick(window.TOOLS);
@@ -60,6 +62,7 @@ window.ACTIVITY = (function buildActivity(count) {
       summary: tool + ' called by ' + agent + ' for request #' + Math.floor(random() * 90000 + 10000) +
         ' on behalf of ' + pick(window.USERS) + ' in workspace ' + pick(window.WORKSPACES) + ' via ' + pick(window.CHANNELS),
     });
+    if ((i + 1) % chunk === 0) await new Promise((resolve) => setTimeout(resolve, 0));
   }
   return events;
-})(100000);
+})(100000, 5000);
